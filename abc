@@ -1,0 +1,887 @@
+if getconnections then
+	for _, v in pairs(getconnections(game:GetService('ScriptContext').Error)) do
+		v:Disable()
+	end
+
+	for _, v in pairs(getconnections(game:GetService('LogService').MessageOut)) do
+		v:Disable()
+	end
+end
+if not _G.ini then
+	_G.ini = true
+
+	local sound = Instance.new('Sound')
+	sound.SoundId = 'rbxassetid://216917652'
+	sound.Parent = game:GetService('SoundService')
+	sound:Play()
+
+	local uis = game:GetService('UserInputService')
+	local heartbeat = game:GetService('RunService').Heartbeat
+	local plrs = game:GetService('Players')
+	local rep = game:GetService('ReplicatedStorage')
+	local Plr = plrs.LocalPlayer
+
+	local Mouse = Plr:GetMouse()
+	local killall = false
+	local explodeall = false
+	local equipkill = false
+	local killme = true
+	local talkDie = false
+	local mouseKill = false
+	local mouseExplode = false
+	local prefixKill = false
+	local explodelol = false
+	local gunName
+	local explodeRem
+	local gunObj
+	local CEs
+	local SEs
+	game.StarterGui:SetCore(
+		'SendNotification',
+		{
+			Title = 'Pegando remotes...',
+			Text = 'espera ai',
+			Duration = 5
+		}
+	)
+	for i,v in next,rep:GetChildren() do
+		if v:IsA('RemoteFunction') and v.Name == 'ChatSystemGetMessage' then
+			killRem = v
+		end
+	end
+	if killRem then
+		game.StarterGui:SetCore(
+			'SendNotification',
+			{
+				Title = 'Remote pego',
+				Text = 'Lord#6363',
+				Duration = 5
+			}
+		)
+	else
+		game.StarterGui:SetCore(
+			'SendNotification',
+			{
+				Title = 'Erro nos remotes',
+				Text = 'Avise em: Lord#6363',
+				Duration = 10
+			}
+		)
+	end
+	if explodeRem and explodelol then
+		game.StarterGui:SetCore(
+			'SendNotification',
+			{
+				Title = 'Explode kk',
+				Text = 'Talvez seja possivel o uso de explosões',
+				Duration = 7
+			}
+		)
+	end
+	if not explodelol and not killRem then
+		game.StarterGui:SetCore(
+			'SendNotification',
+			{
+				Title = 'Erro geral',
+				Text = 'Avise em: Lord#6363',
+				Duration = 5
+			}
+		)
+		return
+	end
+	for i, t in pairs(Plr.Backpack:GetChildren()) do
+		if t:IsA('Tool') and t:FindFirstChild('NoCol') then
+			gunName = t.Name
+		end
+	end
+    --[[	if not gunName or not killRem and explodeRem then
+		game.StarterGui:SetCore('SendNotification', {
+			Title = 'Aviso'; -- the title (ofc)
+			Text = 'O kill está sendo substituido por explode por falta de arma ou remote.'; -- what the text says (ofc)
+			Duration = 10; -- how long the notification should in secounds
+		})
+	end
+	if gunName and killRem and sendKey then
+		Plr.Character:BreakJoints()
+		game.StarterGui:SetCore('SendNotification', {
+			Title = 'Pegando a key'; -- the title (ofc)
+			Text = 'Vose e gey, use gramatica'; -- what the text says (ofc)
+			Duration = 5; -- how long the notification should in secounds
+		})
+		
+		sendKey.OnClientEvent:connect(function(newKey)
+			remoteKey = newKey
+		end)
+	end]]
+	local banPrefixes = {
+		['!'] = true,
+		['.'] = true,
+		[':'] = true,
+		[';'] = true,
+		['/'] = true
+	}
+	local tms = {Revolver = 2, FAL = 2}
+	local lolol = tms[gunName] or 5
+	local protected = {}
+	local protectedTeams = {}
+	local tokill = {}
+	Plr.CharacterAdded:Connect(
+		function(char)
+			if gunName and killRem and sendKey then
+				gunObj = Plr.Backpack:WaitForChild(gunName)
+			end
+			uis.MouseIconEnabled = true
+		end
+	)
+	if gunName and killRem and sendKey then
+		repeat
+			wait()
+		until gunObj
+	end
+
+	wait()
+	game.StarterGui:SetCore(
+		'SendNotification',
+		{
+			Title = 'NoCol Fucker | Lord#6363',
+			Text = 'F para esconder/aparecer',
+			Duration = 5
+		}
+	)
+	-- key that opens/closes the ui
+	local toggle_key = Enum.KeyCode.F
+
+	uis.MouseIconEnabled = true
+	local ts = game:GetService('TweenService')
+
+	-- ui functions
+	fade = function(obj, len, props)
+		ts:Create(obj, TweenInfo.new(len, Enum.EasingStyle.Sine), props):Play()
+	end
+
+	-- shorthand variables
+	local u2, c3 = UDim2.new, Color3.fromRGB
+	local u2f, c3w = u2(1, 0, 1, 0), c3(255, 255, 255)
+
+	-- ui init
+	local g = Instance.new('ScreenGui', game.CoreGui)
+	local f = Instance.new('Frame', g)
+	local t = Instance.new('TextLabel', f)
+	local c = Instance.new('ScrollingFrame', f)
+
+	-- core ui styling
+	local padding = Instance.new('UIPadding', f)
+	local maxsize = Instance.new('UISizeConstraint', f)
+	local textsize = Instance.new('UITextSizeConstraint', t)
+	local listcons = Instance.new('UIListLayout', c)
+
+	padding.PaddingBottom = UDim.new(0, 8)
+	padding.PaddingLeft = UDim.new(0, 15)
+	padding.PaddingRight = UDim.new(0, 15)
+	padding.PaddingTop = UDim.new(0, 0)
+
+	maxsize.MaxSize = Vector2.new(275, 450)
+	maxsize.MinSize = Vector2.new(200, 0)
+	textsize.MaxTextSize = 16
+	listcons.Padding = UDim.new(0, 3)
+
+	-- ui instance properties
+	g.Name = 'fodedor de max'
+	g.ResetOnSpawn = false
+	f.Name = 'main'
+	t.Name = 'header'
+
+	f.Size = u2(0.165, 0, 0.6, 0)
+	f.BorderSizePixel = 0
+	f.BackgroundTransparency = 0.3
+	f.Position = u2(1, -215, 0.5, -150)
+	f.BackgroundColor3 = c3()
+	f.AnchorPoint = Vector2.new(1, 0.5)
+	f.Position = u2(1, -15, 0.5, 0)
+
+	t.Size = u2(1, 0, 0.1, 0)
+	t.BackgroundTransparency = 1
+	t.TextColor3 = c3w
+	t.Font = Enum.Font.GothamBold
+	t.TextScaled = true
+	t.TextXAlignment = Enum.TextXAlignment.Center
+	t.Text = 'BNL Mama gays | Lord#6363'
+
+	c.Name = 'playerlist'
+	c.Position = u2(0, 0, 0.1, 0)
+	c.Size = u2(1, 0, 0.45, 0)
+	c.BackgroundTransparency = 1
+	c.BorderSizePixel = 0
+	c.TopImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png'
+	c.BottomImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png'
+	c.ScrollingDirection = Enum.ScrollingDirection.Y
+	c.ScrollBarThickness = 5
+	c.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+
+	-- playerlist entry ui template
+	local temp = Instance.new('Frame', f)
+	temp.Name = 'temp'
+	temp.Visible = false
+	temp.Size = u2(1, -5, 0, 27)
+	temp.BackgroundTransparency = 0.5
+	temp.BorderSizePixel = 0
+	temp.ClipsDescendants = true
+	temp.BackgroundColor3 = c3()
+
+	local tpad = Instance.new('UIPadding', temp)
+	tpad.PaddingLeft = UDim.new(0, 5)
+	tpad.PaddingRight = UDim.new(0, 5)
+
+	local tb = Instance.new('TextButton', temp)
+	tb.Name = 'button'
+	tb.BackgroundTransparency = 1
+	tb.ZIndex = 5
+	tb.BorderSizePixel = 0
+	tb.Text = ''
+	tb.Size = u2(1, 10, 1, 0)
+	tb.Position = u2(0, -5, 0, 0)
+
+	local tcl = Instance.new('TextLabel', temp)
+	tcl.Name = 'username'
+	tcl.BackgroundTransparency = 1
+	tcl.BorderSizePixel = 0
+	tcl.Size = u2f
+	tcl.TextColor3 = c3w
+	tcl.TextXAlignment = Enum.TextXAlignment.Left
+	tcl.TextScaled = true
+	tcl.Size = u2(0.6, 0, 1, 0)
+	tcl.Font = Enum.Font.Gotham
+
+	local tcls = Instance.new('UITextSizeConstraint', tcl)
+	tcls.MaxTextSize = 14
+
+	local thumb = Instance.new('ImageLabel', temp)
+	thumb.Name = 'thumb'
+	thumb.Size = u2(0.35, 0, 0.35, 0)
+	thumb.SizeConstraint = Enum.SizeConstraint.RelativeXX
+	thumb.Position = u2(1, 0, 0, -15)
+	thumb.AnchorPoint = Vector2.new(1, 0)
+	thumb.BackgroundTransparency = 1
+	thumb.BorderSizePixel = 0
+
+	-- settings ui
+	local sh = Instance.new('TextLabel', f)
+	sh.Name = 'settings_header'
+	sh.Size = u2(1, 0, 0.1, 0)
+	sh.Position = u2(0, 0, 0.55, 0)
+	sh.BackgroundTransparency = 1
+	sh.BorderSizePixel = 0
+	sh.ZIndex = 3
+	sh.TextColor3 = c3w
+	sh.Font = Enum.Font.GothamBold
+	sh.TextScaled = true
+	sh.TextXAlignment = Enum.TextXAlignment.Center
+	sh.Text = 'Funções'
+
+	local shs = Instance.new('UITextSizeConstraint', sh)
+	shs.MaxTextSize = 16
+
+	local items = Instance.new('ScrollingFrame', f)
+	items.Name = 'items'
+	items.Size = u2(1, 0, 0.35, 0)
+	items.Position = u2(0, 0, 0.65, 0)
+	items.BackgroundTransparency = 1
+	items.BorderSizePixel = 0
+	items.TopImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png'
+	items.BottomImage = 'rbxasset://textures/ui/Scroll/scroll-middle.png'
+	items.ScrollingDirection = Enum.ScrollingDirection.Y
+	items.ScrollBarThickness = 5
+	items.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+
+	local itemll = Instance.new('UIListLayout', items)
+	itemll.Padding = UDim.new(0, 3)
+	local function explodePlayer(plrObj)
+		coroutine.resume(
+			coroutine.create(
+				function()
+					if not plrObj then
+						return
+					end
+					if protected[plrObj.Name] then
+						return
+					end
+					if protectedTeams[plrObj.Team.Name] then
+						return
+					end
+					repeat
+						heartbeat:Wait()
+					until plrObj.Character
+					local plrChar = plrObj.Character
+					local hum = plrChar:WaitForChild('HumanoidRootPart')
+					for i = 1, 10 do
+						explodeRem:FireServer(true, hum.Position)
+						wait(0.02)
+					end
+				end
+			)
+		)
+	end
+	local function killPlayer(plrObj)
+		coroutine.resume(
+			coroutine.create(
+				function()
+					if not plrObj then
+						return
+					end
+					if protected[plrObj.Name] then
+						return
+					end
+					if protectedTeams[plrObj.Team.Name] then
+						return
+					end
+					--if not killRem or not gunName then explodePlayer(plrObj) return end
+					repeat
+						heartbeat:Wait()
+					until plrObj.Character
+					local plrChar = plrObj.Character
+					local hum = plrChar:WaitForChild('Humanoid')
+					local head = plrChar:WaitForChild('Head')
+					local ff = plrChar:FindFirstChild('ForceField')
+					if ff then
+						repeat
+							heartbeat:Wait()
+						until not plrChar:FindFirstChild('ForceField')
+					end
+					killRem:InvokeServer(
+						'hit',
+						'}, {  ',
+						math.huge,
+						hum,
+						head,
+						math.huge,
+						Vector3.new(0, -1, 0),
+						math.huge
+					)
+				end
+			)
+		)
+	end
+
+	createSetting = function(name)
+		local setting = Instance.new('Frame', items)
+		setting.Size = u2(1, -5, 0, 27)
+		setting.BackgroundColor3 = c3()
+		setting.BackgroundTransparency = 0.5
+		setting.BorderSizePixel = 0
+
+		local spad = tpad:Clone()
+		spad.Parent = setting
+
+		local slab = tcl:Clone()
+		slab.Name = 'label'
+		slab.Parent = setting
+		slab.Size = u2(1, 0, 1, 0)
+		slab.Text = name
+
+		local stbt = tb:Clone()
+		stbt.Parent = setting
+
+		stbt.MouseEnter:connect(
+			function()
+				fade(setting, 0.25, {BackgroundTransparency = 0.8})
+			end
+		)
+
+		stbt.MouseLeave:connect(
+			function()
+				fade(setting, 0.25, {BackgroundTransparency = 0.5})
+			end
+		)
+
+		items.CanvasSize = u2(0, 0, 0, itemll.AbsoluteContentSize.Y)
+
+		return stbt
+	end
+
+	-- settings & functionality
+	local function playerConnection(plrObj)
+		if plrObj.Name ~= Plr.Name then
+			plrObj.Chatted:Connect(
+				function(msg)
+					local a = string.sub(msg, 1, 1)
+					if (banPrefixes[a] and prefixKill) or talkDie then
+						killPlayer(plrObj)
+					end
+				end
+			)
+		end
+		plrObj.CharacterAdded:Connect(
+			function(char)
+				if killall or tokill[plrObj.Name] then
+					if killme then
+						killPlayer(plrObj)
+					elseif not killme and plrObj.Name ~= Plr.Name then
+						killPlayer(plrObj)
+					end
+				end
+				if explodeall then
+					if killme then
+						explodePlayer(plrObj)
+					elseif not killme and plrObj.Name ~= Plr.Name then
+						explodePlayer(plrObj)
+					end
+				end
+				if plrObj.Name ~= Plr.Name then
+					char.ChildAdded:Connect(
+						function(c)
+							if equipkill and c:IsA('Tool') then
+								killPlayer(plrObj)
+							end
+						end
+					)
+					char.ChildRemoved:Connect(
+						function(c)
+							if equipkill and c:IsA('Tool') then
+								killPlayer(plrObj)
+							end
+						end
+					)
+				end
+			end
+		)
+	end
+	for i, p in pairs(plrs:GetPlayers()) do
+		playerConnection(p)
+	end
+	plrs.PlayerAdded:Connect(
+		function(p)
+			playerConnection(p)
+		end
+	)
+
+	local sound = Instance.new('Sound')
+	sound.SoundId = 'rbxassetid://179235828'
+	sound.Parent = game:GetService('SoundService')
+	local killAllButton = createSetting('Kill All')
+	killAllButton.MouseButton1Down:connect(
+		function()
+			sound:Play()
+			killall = not killall
+			if killall then
+				fade(killAllButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+				for i, p in pairs(plrs:GetPlayers()) do
+					if killme then
+						killPlayer(p)
+					elseif not killme and p.Name ~= Plr.Name then
+						killPlayer(p)
+					end
+				end
+			else
+				fade(killAllButton.Parent.label, 0.25, {TextColor3 = c3w})
+			end
+		end
+	)
+	if explodelol and explodeRem and gunName then
+		local explodeAllButton = createSetting('Explode All')
+		explodeAllButton.MouseButton1Down:connect(
+			function()
+				sound:Play()
+				explodeall = not explodeall
+				if explodeall then
+					fade(explodeAllButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+					for i, p in pairs(plrs:GetPlayers()) do
+						if killme then
+							explodePlayer(p)
+						elseif not killme and p.Name ~= Plr.Name then
+							explodePlayer(p)
+						end
+					end
+				else
+					fade(explodeAllButton.Parent.label, 0.25, {TextColor3 = c3w})
+				end
+			end
+		)
+		local mouseExplodeButton = createSetting('Mouse Explode')
+		mouseExplodeButton.MouseButton1Down:connect(
+			function()
+				sound:Play()
+				mouseExplode = not mouseExplode
+				if mouseExplode then
+					fade(mouseExplodeButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+				else
+					fade(mouseExplodeButton.Parent.label, 0.25, {TextColor3 = c3w})
+				end
+			end
+		)
+	end
+    --[[local killmeButton = createSetting('Kill Me')
+	if killme then
+		fade(killmeButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+	else
+		fade(killmeButton.Parent.label, 0.25, {TextColor3 = c3w})
+	end]]
+    --[[killmeButton.MouseButton1Down:connect(function()
+		sound:Play()
+		killme = not killme
+		if killme then
+			fade(killmeButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+		else
+			fade(killmeButton.Parent.label, 0.25, {TextColor3 = c3w})
+		end
+	end)]]
+	local equipKillButton = createSetting('Equip Kill')
+	equipKillButton.MouseButton1Down:connect(
+		function()
+			sound:Play()
+			equipkill = not equipkill
+			if equipkill then
+				fade(equipKillButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+			else
+				fade(equipKillButton.Parent.label, 0.25, {TextColor3 = c3w})
+			end
+		end
+	)
+	local talkKillButton = createSetting('Talk Kill')
+	talkKillButton.MouseButton1Down:connect(
+		function()
+			sound:Play()
+			talkDie = not talkDie
+			if talkDie then
+				fade(talkKillButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+			else
+				fade(talkKillButton.Parent.label, 0.25, {TextColor3 = c3w})
+			end
+		end
+	)
+	local mouseKillButton = createSetting('Mouse Kill')
+	mouseKillButton.MouseButton1Down:connect(
+		function()
+			sound:Play()
+			mouseKill = not mouseKill
+			if mouseKill then
+				fade(mouseKillButton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+			else
+				fade(mouseKillButton.Parent.label, 0.25, {TextColor3 = c3w})
+			end
+		end
+	)
+	local prefixkillbutton = createSetting('Prefix Kill')
+	prefixkillbutton.MouseButton1Down:connect(
+		function()
+			sound:Play()
+			prefixKill = not prefixKill
+			if prefixKill then
+				fade(prefixkillbutton.Parent.label, 0.25, {TextColor3 = c3(52, 189, 98)})
+			else
+				fade(prefixkillbutton.Parent.label, 0.25, {TextColor3 = c3w})
+			end
+		end
+	)
+	Mouse.Button1Down:Connect(
+		function()
+			if mouseKill then
+				if Mouse.Target and Mouse.Target.Parent then
+					local name = Mouse.Target.Parent.Name
+					killPlayer(plrs:FindFirstChild(name))
+				end
+			end
+			if mouseExplode then
+				if Mouse.Target and Mouse.Target.Parent then
+					local name = Mouse.Target.Parent.Name
+					explodePlayer(plrs:FindFirstChild(name))
+				end
+			end
+		end
+	)
+	createEntry = function(name, id)
+		local entry = temp:Clone()
+		entry.Parent = c
+
+		entry.username.Text = name
+
+		entry.thumb.Image =
+			game:GetService('Players'):GetUserThumbnailAsync(
+		id,
+		Enum.ThumbnailType.HeadShot,
+		Enum.ThumbnailSize.Size100x100
+		)
+		entry.Visible = true
+		entry.LayoutOrder = #c:GetChildren()
+		entry.Name = name
+
+		local sound = Instance.new('Sound')
+		sound.SoundId = 'rbxassetid://3398620867'
+		sound.Parent = game:GetService('SoundService')
+		-- handle clicking for player
+		local thing = 'none'
+		local con
+		entry.button.MouseButton1Down:connect(
+			function()
+				if thing == 'none' then
+					if uis:IsKeyDown(Enum.KeyCode.LeftControl) then
+						thing = 'kill'
+						entry.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+						con =
+							plrs[name].CharacterAdded:Connect(
+								function(char)
+								killPlayer(plrs[name])
+							end
+							)
+						killPlayer(plrs[name])
+					else
+						killPlayer(plrs[name])
+					end
+				elseif thing == 'kill' then
+					thing = 'protect'
+					entry.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+					protected[name] = true
+					if con then
+						con:Disconnect()
+					end
+				else
+					thing = 'none'
+					entry.BackgroundColor3 = c3()
+					protected[name] = nil
+				end
+				killPlayer(game:GetService('Players'):FindFirstChild(name))
+				sound:Play()
+			end
+		)
+
+		entry.button.MouseEnter:connect(
+			function()
+				fade(entry, 0.25, {BackgroundTransparency = 0.8})
+			end
+		)
+
+		entry.button.MouseLeave:connect(
+			function()
+				fade(entry, 0.25, {BackgroundTransparency = 0.5})
+			end
+		)
+	end
+
+	createTeamEntry = function(team, id)
+		local entry = temp:Clone()
+		entry.Parent = c
+		entry.username.Text = team.Name
+		--entry.thumb.Image = game:GetService('Players'):GetUserThumbnailAsync(id, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+		entry.Visible = true
+		entry.LayoutOrder = #c:GetChildren()
+		entry.Name = team.Name
+
+		local sound = Instance.new('Sound')
+		sound.SoundId = 'rbxassetid://3398620867'
+		sound.Parent = game:GetService('SoundService')
+		-- handle clicking for player
+		local thing = 'none'
+		local cons = {}
+		entry.button.MouseButton1Down:connect(
+			function()
+				if thing == 'none' then
+					if uis:IsKeyDown(Enum.KeyCode.LeftControl) then
+						thing = 'kill'
+						entry.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+						for i, p in pairs(plrs:GetPlayers()) do
+							if p.Team.Name == team.Name then
+								killPlayer(p)
+								cons[p] =
+									p.CharacterAdded:Connect(
+										function(char)
+										killPlayer(p)
+									end
+									)
+							end
+						end
+					else
+						for i, p in pairs(plrs:GetPlayers()) do
+							if p.Team.Name == team.Name then
+								killPlayer(p)
+							end
+						end
+					end
+				elseif thing == 'kill' then
+					thing = 'protect'
+					entry.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+					for plr, con in pairs(cons) do
+						if con then
+							con:Disconnect()
+						end
+					end
+					protectedTeams[team.Name] = true
+				else
+					thing = 'none'
+					entry.BackgroundColor3 = c3()
+					protectedTeams[team.Name] = nil
+				end
+				sound:Play()
+			end
+		)
+		entry.button.MouseEnter:connect(
+			function()
+				fade(entry, 0.25, {BackgroundTransparency = 0.8})
+			end
+		)
+
+		entry.button.MouseLeave:connect(
+			function()
+				fade(entry, 0.25, {BackgroundTransparency = 0.5})
+			end
+		)
+	end
+
+	deleteEntry = function(name)
+		for _, v in pairs(c:GetChildren()) do
+			if v.Name == name then
+				v:Destroy()
+			end
+		end
+	end
+	spawn(
+		function()
+			while wait(3) do
+				if gunObj and gunObj:FindFirstChild('Ammo') then
+					gunObj.Ammo.Value = math.huge
+				end
+				if killall then
+					for i, p in pairs(plrs:GetPlayers()) do
+						local c = p.Character
+						if c then
+							local h = c:FindFirstChildOfClass('Humanoid')
+							if h and h.Health > 2 then
+								killPlayer(p)
+							end
+						end
+					end
+				end
+				if explodeall then
+					for i, p in pairs(plrs:GetPlayers()) do
+						local c = p.Character
+						if c then
+							local h = c:FindFirstChildOfClass('Humanoid')
+							if h and h.Health > 2 then
+								explodePlayer(p)
+							end
+						end
+					end
+				end
+				for i, p in pairs(plrs:GetPlayers()) do
+					local kill = false
+					if tokill[p.Name] then
+						local c = p.Character
+						if c then
+							local h = c:FindFirstChildOfClass('Humanoid')
+							if h and h.Health > 2 then
+								killPlayer(p)
+							end
+						end
+					end
+				end
+			end
+		end
+	)
+	uis.InputBegan:connect(
+		function(input, gpe)
+			if not gpe then
+				if input.KeyCode == toggle_key then
+					g.Enabled = not g.Enabled
+				end
+			end
+		end
+	)
+
+	-- dragging code, ripped from https://devforum.roblox.com/t/draggable-property-is-hidden-on-gui-objects/107689/5
+	local dragging
+	local dragInput
+	local dragStart
+	local startPos
+
+	local function update(input)
+		local delta = input.Position - dragStart
+		f.Position =
+			UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+
+	f.InputBegan:Connect(
+		function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = f.Position
+
+				input.Changed:Connect(
+					function()
+						if input.UserInputState == Enum.UserInputState.End then
+							dragging = false
+						end
+					end
+				)
+			end
+		end
+	)
+
+	f.InputChanged:Connect(
+		function(input)
+			if
+				input.UserInputType == Enum.UserInputType.MouseMovement or
+					input.UserInputType == Enum.UserInputType.Touch
+			then
+				dragInput = input
+			end
+		end
+	)
+
+	uis.InputChanged:Connect(
+		function(input)
+			if input == dragInput and dragging then
+				update(input)
+			end
+		end
+	)
+	-- create entry for client
+	createEntry(plrs.LocalPlayer.Name, plrs.LocalPlayer.UserId)
+
+	-- create entries for all other players
+	for _, v in pairs(plrs:GetPlayers()) do
+		if v ~= plrs.LocalPlayer then
+			createEntry(v.Name, v.UserId)
+		end
+	end
+	for i, v in pairs(game:GetService('Teams'):GetChildren()) do
+		createTeamEntry(v)
+	end
+	listcons:GetPropertyChangedSignal('AbsoluteContentSize'):connect(
+	function()
+		c.CanvasSize = u2(0, 0, 0, listcons.AbsoluteContentSize.Y)
+	end
+	)
+
+	itemll:GetPropertyChangedSignal('AbsoluteContentSize'):connect(
+	function()
+		items.CanvasSize = u2(0, 0, 0, itemll.AbsoluteContentSize.Y)
+	end
+	)
+
+	plrs.PlayerAdded:connect(
+		function(plr)
+			createEntry(plr.Name, plr.UserId)
+		end
+	)
+
+	plrs.PlayerRemoving:connect(
+		function(plr)
+			deleteEntry(plr.Name)
+			protected[plr.Name] = nil
+			tokill[plr.Name] = nil
+		end
+	)
+else
+	local sound = Instance.new('Sound')
+	sound.SoundId = 'rbxassetid://2130284653'
+	sound.Parent = game:GetService('SoundService')
+	sound:Play()
+
+	game.StarterGui:SetCore(
+		'SendNotification',
+		{
+			Title = 'Já ta carregado idiota',
+			Text = 'Deixa de ser burro',
+			Duration = 5
+		}
+	)
+end
